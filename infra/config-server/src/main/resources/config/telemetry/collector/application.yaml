@@ -1,33 +1,16 @@
-spring:
-  application:
-    name: collector
-  config:
-    import: optional:configserver:http://localhost:8888
-    config:
-      fail-fast: false
-      retry:
-        useRandomPolicy: true
-        max-interval: 30000
-        initial-interval: 5000
-        multiplier: 2.0
-        max-attempts: 10
-
-# Локальные настройки (будут использованы, если Config Server недоступен)
 server:
   port: 8082
 
-spring.kafka:
-  bootstrap-servers: localhost:9092
-  producer:
-    key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    value-serializer: ru.practicum.kafka.serialization.CustomSensorEventSerializer
-    properties:
-      enable-idempotence: false
-      acks: all
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
 
-grpc:
-  server:
-    port: 59091
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: ru.practicum.kafka.serialization.CustomSensorEventSerializer
+      properties:
+        enable-idempotence: false
+        acks: all
 
 logging:
   level:
@@ -37,6 +20,6 @@ logging:
     org.springframework.kafka: INFO
     org.apache.kafka: INFO
 
-eureka:
-  client:
-    enabled: false
+grpc:
+  server:
+    port: 59091

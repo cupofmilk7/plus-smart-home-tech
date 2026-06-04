@@ -2,19 +2,29 @@ spring:
   application:
     name: aggregator
   config:
-    import: configserver:http://localhost:8888
+    import: optional:configserver:http://localhost:8888
     config:
-      fail-fast: true
+      fail-fast: false
       retry:
         useRandomPolicy: true
-        retry:
-          useRandomPolicy: true
-          max-interval: 30000
-          initial-interval: 5000
-          multiplier: 2.0
-          max-attempts: 10
+        max-interval: 30000
+        initial-interval: 5000
+        multiplier: 2.0
+        max-attempts: 10
+
+# Локальные настройки
+server:
+  port: 8083
+
+spring.kafka:
+  bootstrap-servers: localhost:9092
+
+logging:
+  level:
+    root: INFO
+    ru.practicum: DEBUG
+    org.apache.kafka: INFO
 
 eureka:
   client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+    enabled: false
