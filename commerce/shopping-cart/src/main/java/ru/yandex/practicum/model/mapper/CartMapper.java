@@ -13,7 +13,7 @@ import java.util.UUID;
 @Component
 public class CartMapper {
 
-    public ShoppingCartDto toDto(ShoppingCart entity, List<CartItem> items) {
+    public static ShoppingCartDto toDto(ShoppingCart entity, List<CartItem> items) {
         if (entity == null) return null;
 
         Map<UUID, Integer> products = new HashMap<>();

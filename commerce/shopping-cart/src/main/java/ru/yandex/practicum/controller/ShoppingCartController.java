@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.dto.ChangeProductQuantityRequest;
 import ru.yandex.practicum.dto.ShoppingCartDto;
+import ru.yandex.practicum.feign.ShoppingCartClient;
 import ru.yandex.practicum.service.ShoppingCartService;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/shopping-cart")
 @RequiredArgsConstructor
-public class ShoppingCartController {
+public class ShoppingCartController implements ShoppingCartClient {
 
     private final ShoppingCartService shoppingCartService;
 

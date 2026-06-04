@@ -1,6 +1,7 @@
 package ru.yandex.practicum.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.dto.AddProductToWarehouseRequest;
 import ru.yandex.practicum.dto.BookedProductsDto;
@@ -11,11 +12,11 @@ import ru.yandex.practicum.dto.NewProductInWarehouseRequest;
 public interface WarehouseClient {
 
     @PutMapping
-    void newProductInWarehouse(@RequestBody NewProductInWarehouseRequest request);
+    ResponseEntity<Void> newProductInWarehouse(@RequestBody NewProductInWarehouseRequest request);
 
     @PostMapping("/check")
-    BookedProductsDto checkProductQuantityEnoughForShoppingCart(@RequestBody ShoppingCartDto shoppingCart);
+    ResponseEntity<BookedProductsDto> checkProductQuantityEnoughForShoppingCart(@RequestBody ShoppingCartDto shoppingCart);
 
     @PostMapping("/add")
-    void addProductToWarehouse(@RequestBody AddProductToWarehouseRequest request);
+    ResponseEntity<Void> addProductToWarehouse(@RequestBody AddProductToWarehouseRequest request);
 }

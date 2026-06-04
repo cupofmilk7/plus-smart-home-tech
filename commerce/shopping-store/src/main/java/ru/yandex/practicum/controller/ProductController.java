@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.dto.ProductCategory;
 import ru.yandex.practicum.dto.ProductDto;
 import ru.yandex.practicum.dto.SetProductQuantityStateRequest;
+import ru.yandex.practicum.feign.ShoppingStoreClient;
 import ru.yandex.practicum.service.ProductService;
 
 import java.util.UUID;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/shopping-store")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductController implements ShoppingStoreClient {
 
     private final ProductService productService;
 
