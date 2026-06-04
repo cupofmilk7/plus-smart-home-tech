@@ -64,16 +64,16 @@ public class ProductController implements ShoppingStoreClient {
     }
 
     @PostMapping("/removeProductFromStore")
-    public ResponseEntity<Boolean> removeProductFromStore(@RequestBody UUID productId) {
-        boolean result = productService.removeProductFromStore(productId);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ProductDto> removeProductFromStore(@RequestBody UUID productId) {
+        ProductDto product = productService.removeProductFromStore(productId);
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping("/quantityState")
-    public ResponseEntity<Boolean> setProductQuantityState(
+    public ResponseEntity<ProductDto> setProductQuantityState(
             @Valid @RequestBody SetProductQuantityStateRequest request) {
-        boolean result = productService.setProductQuantityState(request);
-        return ResponseEntity.ok(result);
+        ProductDto product = productService.setProductQuantityState(request);
+        return ResponseEntity.ok(product);
     }
 
     private Sort parseSort(String[] sortParams) {

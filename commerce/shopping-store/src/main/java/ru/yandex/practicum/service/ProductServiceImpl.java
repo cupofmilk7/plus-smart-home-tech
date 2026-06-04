@@ -67,27 +67,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public boolean removeProductFromStore(UUID productId) {
-
+    public ProductDto removeProductFromStore(UUID productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + productId));
 
         product.setProductState(ProductState.DEACTIVATE);
-        productRepository.save(product);
-
-        return true;
+        Product updated = productRepository.save(product);
+        return ProductMapper.toDto(updated);
     }
 
     @Override
     @Transactional
-    public boolean setProductQuantityState(SetProductQuantityStateRequest request) {
-
+    public ProductDto setProductQuantityState(SetProductQuantityStateRequest request) {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + request.getProductId()));
 
         product.setQuantityState(request.getQuantityState());
-        productRepository.save(product);
-
-        return true;
+        Product updated = productRepository.save(product);
+        return ProductMapper.toDto(updated);
     }
 }

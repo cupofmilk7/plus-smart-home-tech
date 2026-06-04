@@ -30,8 +30,8 @@ public interface ShoppingStoreClient {
     ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto);
 
     @PostMapping("/removeProductFromStore")
-    ResponseEntity<Boolean> removeProductFromStore(@RequestBody UUID productId);
+    ResponseEntity<ProductDto> removeProductFromStore(@RequestBody UUID productId);
 
     @PostMapping("/quantityState")
-    ResponseEntity<Boolean> setProductQuantityState(@RequestBody SetProductQuantityStateRequest request);
+    ResponseEntity<ProductDto> setProductQuantityState(@RequestBody SetProductQuantityStateRequest request);
 }
