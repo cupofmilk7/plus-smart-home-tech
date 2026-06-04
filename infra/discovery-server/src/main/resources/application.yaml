@@ -1,3 +1,11 @@
+spring:
+  application:
+    name: discovery-server
+  config:
+    import: optional:configserver:http://localhost:8888
+    config:
+      fail-fast: false
+
 server:
   port: 8761
 
@@ -9,3 +17,8 @@ eureka:
     fetchRegistry: false
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+logging:
+  level:
+    com.netflix.eureka: INFO
+    com.netflix.discovery: INFO
