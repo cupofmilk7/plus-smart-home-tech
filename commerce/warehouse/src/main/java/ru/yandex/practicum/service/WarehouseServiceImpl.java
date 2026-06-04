@@ -10,9 +10,9 @@ import ru.yandex.practicum.exception.SpecifiedProductAlreadyInWarehouseException
 import ru.yandex.practicum.model.AddProductToWarehouseRequest;
 import ru.yandex.practicum.model.NewProductInWarehouseRequest;
 import ru.yandex.practicum.model.ProductWarehouse;
-import ru.yandex.practicum.model.dto.AddressDto;
-import ru.yandex.practicum.model.dto.BookedProductsDto;
-import ru.yandex.practicum.model.dto.ShoppingCartDto;
+import ru.yandex.practicum.dto.AddressDto;
+import ru.yandex.practicum.dto.BookedProductsDto;
+import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.model.mapper.ProductWarehouseMapper;
 import ru.yandex.practicum.repository.ProductWarehouseRepository;
 

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.model.dto.DimensionDto;
+import ru.yandex.practicum.dto.DimensionDto;
 
 import java.util.UUID;
 

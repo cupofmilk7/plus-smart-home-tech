@@ -2,7 +2,7 @@ package ru.yandex.practicum.model.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.model.Product;
-import ru.yandex.practicum.model.dto.ProductDto;
+import ru.yandex.practicum.dto.ProductDto;
 
 @Component
 public class ProductMapper {

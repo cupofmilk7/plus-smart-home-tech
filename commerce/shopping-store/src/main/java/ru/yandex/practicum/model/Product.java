@@ -2,6 +2,9 @@ package ru.yandex.practicum.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ru.yandex.practicum.dto.ProductCategory;
+import ru.yandex.practicum.dto.ProductState;
+import ru.yandex.practicum.dto.QuantityState;
 
 import java.util.UUID;
 

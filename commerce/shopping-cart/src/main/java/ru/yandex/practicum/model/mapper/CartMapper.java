@@ -1,9 +1,9 @@
 package ru.yandex.practicum.model.mapper;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.model.CartItem;
 import ru.yandex.practicum.model.ShoppingCart;
-import ru.yandex.practicum.model.dto.ShoppingCartDto;
 
 import java.util.HashMap;
 import java.util.List;

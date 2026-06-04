@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.dto.AddressDto;
+import ru.yandex.practicum.dto.BookedProductsDto;
 import ru.yandex.practicum.model.AddProductToWarehouseRequest;
 import ru.yandex.practicum.model.NewProductInWarehouseRequest;
-import ru.yandex.practicum.model.dto.*;
+import ru.yandex.practicum.dto.*;
 import ru.yandex.practicum.service.WarehouseService;
 
 @Slf4j

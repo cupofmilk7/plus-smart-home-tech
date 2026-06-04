@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.ChangeProductQuantityRequest;
-import ru.yandex.practicum.model.dto.ShoppingCartDto;
+import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.service.ShoppingCartService;
 
 import java.util.List;

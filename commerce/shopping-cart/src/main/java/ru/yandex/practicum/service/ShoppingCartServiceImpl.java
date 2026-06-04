@@ -9,7 +9,7 @@ import ru.yandex.practicum.exception.NotAuthorizedUserException;
 import ru.yandex.practicum.model.CartItem;
 import ru.yandex.practicum.model.ChangeProductQuantityRequest;
 import ru.yandex.practicum.model.ShoppingCart;
-import ru.yandex.practicum.model.dto.ShoppingCartDto;
+import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.model.mapper.CartMapper;
 import ru.yandex.practicum.repository.CartItemRepository;
 import ru.yandex.practicum.repository.ShoppingCartRepository;

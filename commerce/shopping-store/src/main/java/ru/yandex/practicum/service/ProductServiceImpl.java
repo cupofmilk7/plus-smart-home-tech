@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.exception.ProductNotFoundException;
 import ru.yandex.practicum.model.Product;
-import ru.yandex.practicum.model.ProductCategory;
-import ru.yandex.practicum.model.ProductState;
+import ru.yandex.practicum.dto.ProductCategory;
+import ru.yandex.practicum.dto.ProductState;
 import ru.yandex.practicum.model.SetProductQuantityStateRequest;
-import ru.yandex.practicum.model.dto.ProductDto;
+import ru.yandex.practicum.dto.ProductDto;
 import ru.yandex.practicum.model.mapper.ProductMapper;
 import ru.yandex.practicum.repository.ProductRepository;
 

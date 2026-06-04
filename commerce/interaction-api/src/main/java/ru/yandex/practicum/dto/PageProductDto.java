@@ -1,11 +1,9 @@
-package ru.yandex.practicum.model.dto;
+package ru.yandex.practicum.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.validation.Valid;
-import ru.yandex.practicum.model.PageableObject;
-import ru.yandex.practicum.model.SortObject;
 
 import java.util.List;
 
