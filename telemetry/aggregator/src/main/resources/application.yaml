@@ -7,7 +7,12 @@ spring:
       fail-fast: true
       retry:
         useRandomPolicy: true
-        max-interval: 6000
+        retry:
+          useRandomPolicy: true
+          max-interval: 30000
+          initial-interval: 5000
+          multiplier: 2.0
+          max-attempts: 10
 
 eureka:
   client:
