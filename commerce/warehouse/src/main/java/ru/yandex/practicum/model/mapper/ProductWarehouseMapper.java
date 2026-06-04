@@ -1,6 +1,6 @@
 package ru.yandex.practicum.model.mapper;
 
-import ru.yandex.practicum.model.NewProductInWarehouseRequest;
+import ru.yandex.practicum.dto.NewProductInWarehouseRequest;
 import ru.yandex.practicum.model.ProductWarehouse;
 
 public class ProductWarehouseMapper {

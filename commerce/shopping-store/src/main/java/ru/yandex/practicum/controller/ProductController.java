@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.dto.ProductCategory;
 import ru.yandex.practicum.dto.ProductDto;
+import ru.yandex.practicum.dto.SetProductQuantityStateRequest;
 import ru.yandex.practicum.service.ProductService;
 
 import java.util.UUID;
@@ -69,7 +70,7 @@ public class ProductController {
 
     @PostMapping("/quantityState")
     public ResponseEntity<Boolean> setProductQuantityState(
-            @Valid @RequestBody ru.yandex.practicum.model.SetProductQuantityStateRequest request) {
+            @Valid @RequestBody SetProductQuantityStateRequest request) {
         boolean result = productService.setProductQuantityState(request);
         return ResponseEntity.ok(result);
     }

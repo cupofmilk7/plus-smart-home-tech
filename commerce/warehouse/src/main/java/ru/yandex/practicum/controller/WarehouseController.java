@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.dto.AddressDto;
 import ru.yandex.practicum.dto.BookedProductsDto;
-import ru.yandex.practicum.model.AddProductToWarehouseRequest;
-import ru.yandex.practicum.model.NewProductInWarehouseRequest;
+import ru.yandex.practicum.dto.AddProductToWarehouseRequest;
+import ru.yandex.practicum.dto.NewProductInWarehouseRequest;
 import ru.yandex.practicum.dto.*;
 import ru.yandex.practicum.service.WarehouseService;
 

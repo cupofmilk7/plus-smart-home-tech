@@ -3,8 +3,8 @@ package ru.yandex.practicum.service;
 import ru.yandex.practicum.dto.AddressDto;
 import ru.yandex.practicum.dto.BookedProductsDto;
 import ru.yandex.practicum.dto.ShoppingCartDto;
-import ru.yandex.practicum.model.AddProductToWarehouseRequest;
-import ru.yandex.practicum.model.NewProductInWarehouseRequest;
+import ru.yandex.practicum.dto.AddProductToWarehouseRequest;
+import ru.yandex.practicum.dto.NewProductInWarehouseRequest;
 
 public interface WarehouseService {
 

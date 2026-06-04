@@ -1,10 +1,9 @@
-package ru.yandex.practicum.model;
+package ru.yandex.practicum.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.Setter;
-import ru.yandex.practicum.dto.QuantityState;
 
 import java.util.UUID;
 
