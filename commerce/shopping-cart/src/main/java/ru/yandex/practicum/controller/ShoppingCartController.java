@@ -3,6 +3,7 @@ package ru.yandex.practicum.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.dto.ChangeProductQuantityRequest;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/shopping-cart")
 @RequiredArgsConstructor
+@EnableFeignClients(basePackages = "ru.yandex.practicum.feign")
 public class ShoppingCartController implements ShoppingCartClient {
 
     private final ShoppingCartService shoppingCartService;
