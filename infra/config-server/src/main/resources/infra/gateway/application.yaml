@@ -8,12 +8,18 @@ spring:
             - Path=/shopping-store/**
           filters:
             - PrefixPath=/api/v1
-            - Retry=3
 
         - id: shopping_cart_route
           uri: lb://SHOPPING-CART
           predicates:
             - Path=/shopping-cart/**
+          filters:
+            - PrefixPath=/api/v1
+
+        - id: warehouse_route
+          uri: lb://WAREHOUSE
+          predicates:
+            - Path=/warehouse/**
           filters:
             - PrefixPath=/api/v1
 
