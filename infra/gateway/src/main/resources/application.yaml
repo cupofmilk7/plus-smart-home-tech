@@ -36,6 +36,13 @@ spring:
           filters:
             - PrefixPath=/api/v1
 
+        - id: order_route
+          uri: lb://ORDER
+          predicates:
+            - Path=/order/**
+          filters:
+            - PrefixPath=/api/v1
+
 server:
   port: 8080
 

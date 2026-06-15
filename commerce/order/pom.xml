@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>shopping-cart</artifactId>
+    <artifactId>order</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -55,6 +55,7 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Lombok - обновляем версию и меняем scope на provided -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -107,4 +108,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
