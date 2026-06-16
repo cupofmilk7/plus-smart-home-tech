@@ -8,8 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = "ru.yandex.practicum.feign")
-public class ShoppingCartApplication {
+public class PaymentApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ShoppingCartApplication.class, args);
+        SpringApplication.run(PaymentApplication.class, args);
     }
 }
