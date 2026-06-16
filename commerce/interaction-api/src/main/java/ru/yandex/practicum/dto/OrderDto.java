@@ -25,4 +25,5 @@ public class OrderDto {
     private Double totalPrice;
     private Double deliveryPrice;
     private Double productPrice;
+    private AddressDto deliveryAddress;
 }
