@@ -10,9 +10,9 @@ import ru.yandex.practicum.exception.NoOrderFoundException;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.feign.ShoppingCartClient;
 import ru.yandex.practicum.feign.WarehouseClient;
-import ru.yandex.practicum.model.mapper.OrderMapper;
 import ru.yandex.practicum.model.Order;
 import ru.yandex.practicum.model.OrderProduct;
+import ru.yandex.practicum.model.mapper.OrderMapper;
 import ru.yandex.practicum.repository.OrderProductRepository;
 import ru.yandex.practicum.repository.OrderRepository;
 
@@ -30,6 +30,12 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductRepository orderProductRepository;
     private final ShoppingCartClient shoppingCartClient;
     private final WarehouseClient warehouseClient;
+
+    private static final double BASE_PRODUCT_PRICE = 100.0;
+    private static final double BASE_DELIVERY_PRICE = 500.0;
+    private static final double WEIGHT_PRICE_MULTIPLIER = 100.0;
+    private static final double VOLUME_PRICE_MULTIPLIER = 50.0;
+    private static final double FRAGILE_SURCHARGE = 200.0;
 
     @Override
     @Transactional(readOnly = true)
@@ -68,6 +74,10 @@ public class OrderServiceImpl implements OrderService {
                 throw new NoSpecifiedProductInWarehouseException("Failed to check warehouse availability");
             }
 
+            double productPrice = calculateProductPrice(cart.getProducts());
+            double deliveryPrice = calculateDeliveryPrice(booked);
+            double totalPrice = productPrice + deliveryPrice;
+
             Order order = Order.builder()
                     .shoppingCartId(cart.getShoppingCartId())
                     .username(username)
@@ -77,21 +87,14 @@ public class OrderServiceImpl implements OrderService {
                     .deliveryWeight(booked.getDeliveryWeight())
                     .deliveryVolume(booked.getDeliveryVolume())
                     .fragile(booked.getFragile())
-                    .productPrice(calculateProductPrice(cart.getProducts()))
-                    .deliveryPrice(calculateDeliveryPrice(booked))
-                    .totalPrice(calculateProductPrice(cart.getProducts()) + calculateDeliveryPrice(booked))
+                    .productPrice(productPrice)
+                    .deliveryPrice(deliveryPrice)
+                    .totalPrice(totalPrice)
                     .build();
 
             Order savedOrder = orderRepository.save(order);
 
-            for (Map.Entry<UUID, Integer> entry : cart.getProducts().entrySet()) {
-                OrderProduct orderProduct = OrderProduct.builder()
-                        .orderId(savedOrder.getOrderId())
-                        .productId(entry.getKey())
-                        .quantity(entry.getValue())
-                        .build();
-                orderProductRepository.save(orderProduct);
-            }
+            saveOrderProducts(savedOrder.getOrderId(), cart.getProducts());
 
             shoppingCartClient.deactivateCurrentShoppingCart(username);
 
@@ -111,14 +114,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto productReturn(ProductReturnRequest request) {
         log.debug("Returning products for order: {}", request.getOrderId());
 
-        Order order = orderRepository.findById(request.getOrderId())
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + request.getOrderId()));
-
+        Order order = getOrderById(request.getOrderId());
         order.setState(OrderState.PRODUCT_RETURNED);
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     @Override
@@ -126,14 +126,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto payment(UUID orderId) {
         log.debug("Processing payment for order: {}", orderId);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
-
+        Order order = getOrderById(orderId);
         order.setState(OrderState.PAID);
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     @Override
@@ -141,14 +138,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto paymentFailed(UUID orderId) {
         log.debug("Payment failed for order: {}", orderId);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
-
+        Order order = getOrderById(orderId);
         order.setState(OrderState.PAYMENT_FAILED);
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     @Override
@@ -156,14 +150,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto delivery(UUID orderId) {
         log.debug("Processing delivery for order: {}", orderId);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
-
+        Order order = getOrderById(orderId);
         order.setState(OrderState.DELIVERED);
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     @Override
@@ -171,14 +162,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto deliveryFailed(UUID orderId) {
         log.debug("Delivery failed for order: {}", orderId);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
-
+        Order order = getOrderById(orderId);
         order.setState(OrderState.DELIVERY_FAILED);
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     @Override
@@ -186,14 +174,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto assembly(UUID orderId) {
         log.debug("Processing assembly for order: {}", orderId);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
-
+        Order order = getOrderById(orderId);
         order.setState(OrderState.ASSEMBLED);
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     @Override
@@ -201,14 +186,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto assemblyFailed(UUID orderId) {
         log.debug("Assembly failed for order: {}", orderId);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
-
+        Order order = getOrderById(orderId);
         order.setState(OrderState.ASSEMBLY_FAILED);
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     @Override
@@ -216,14 +198,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto complete(UUID orderId) {
         log.debug("Completing order: {}", orderId);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
-
+        Order order = getOrderById(orderId);
         order.setState(OrderState.COMPLETED);
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     @Override
@@ -231,14 +210,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto calculateTotalCost(UUID orderId) {
         log.debug("Calculating total cost for order: {}", orderId);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
-
+        Order order = getOrderById(orderId);
         order.setTotalPrice(order.getProductPrice() + order.getDeliveryPrice());
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     @Override
@@ -246,20 +222,19 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto calculateDeliveryCost(UUID orderId) {
         log.debug("Calculating delivery cost for order: {}", orderId);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
+        Order order = getOrderById(orderId);
 
-        BookedProductsDto booked = new BookedProductsDto(
-                order.getDeliveryWeight(),
-                order.getDeliveryVolume(),
-                order.getFragile()
-        );
+        BookedProductsDto booked = BookedProductsDto.builder()
+                .deliveryWeight(order.getDeliveryWeight())
+                .deliveryVolume(order.getDeliveryVolume())
+                .fragile(order.getFragile())
+                .build();
+
         order.setDeliveryPrice(calculateDeliveryPrice(booked));
         order.setTotalPrice(order.getProductPrice() + order.getDeliveryPrice());
         Order updatedOrder = orderRepository.save(order);
 
-        List<OrderProduct> products = orderProductRepository.findByOrderId(updatedOrder.getOrderId());
-        return OrderMapper.toDto(updatedOrder, products);
+        return getOrderDto(updatedOrder);
     }
 
     private void validateUsername(String username) {
@@ -268,15 +243,52 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    private Order getOrderById(UUID orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new NoOrderFoundException("Order not found: " + orderId));
+    }
+
+    private OrderDto getOrderDto(Order order) {
+        List<OrderProduct> products = orderProductRepository.findByOrderId(order.getOrderId());
+        return OrderMapper.toDto(order, products);
+    }
+
+    private void saveOrderProducts(UUID orderId, Map<UUID, Integer> products) {
+        for (Map.Entry<UUID, Integer> entry : products.entrySet()) {
+            OrderProduct orderProduct = OrderProduct.builder()
+                    .orderId(orderId)
+                    .productId(entry.getKey())
+                    .quantity(entry.getValue())
+                    .build();
+            orderProductRepository.save(orderProduct);
+        }
+    }
+
     private double calculateProductPrice(Map<UUID, Integer> products) {
-        return products.values().stream().mapToDouble(Integer::doubleValue).sum() * 100.0;
+        return products.values().stream()
+                .mapToDouble(Integer::doubleValue)
+                .sum() * BASE_PRODUCT_PRICE;
     }
 
     private double calculateDeliveryPrice(BookedProductsDto booked) {
-        double basePrice = 500.0;
-        double weightCost = booked.getDeliveryWeight() * 100.0;
-        double volumeCost = booked.getDeliveryVolume() * 50.0;
-        double fragileCost = Boolean.TRUE.equals(booked.getFragile()) ? 200.0 : 0.0;
-        return basePrice + weightCost + volumeCost + fragileCost;
+        double deliveryPrice = BASE_DELIVERY_PRICE;
+
+        if (booked.getDeliveryWeight() != null) {
+            deliveryPrice += booked.getDeliveryWeight() * WEIGHT_PRICE_MULTIPLIER;
+        }
+
+        if (booked.getDeliveryVolume() != null) {
+            deliveryPrice += booked.getDeliveryVolume() * VOLUME_PRICE_MULTIPLIER;
+        }
+
+        if (isFragile(booked)) {
+            deliveryPrice += FRAGILE_SURCHARGE;
+        }
+
+        return deliveryPrice;
+    }
+
+    private boolean isFragile(BookedProductsDto booked) {
+        return booked.getFragile() != null && booked.getFragile();
     }
 }
