@@ -8,6 +8,7 @@ import ru.yandex.practicum.dto.*;
 import ru.yandex.practicum.feign.OrderClient;
 import ru.yandex.practicum.feign.WarehouseClient;
 import ru.yandex.practicum.model.Delivery;
+import ru.yandex.practicum.model.mapper.DeliveryMapper;
 import ru.yandex.practicum.repository.DeliveryRepository;
 
 import java.util.UUID;
@@ -37,12 +38,10 @@ public class DeliveryServiceImpl implements DeliveryService {
     public DeliveryDto planDelivery(DeliveryDto deliveryDto) {
         log.debug("Planning delivery for order: {}", deliveryDto.getOrderId());
 
-        Delivery delivery = Delivery.builder().deliveryId(UUID.randomUUID()).orderId(deliveryDto.getOrderId()).fromCountry(deliveryDto.getFromAddress().getCountry()).fromCity(deliveryDto.getFromAddress().getCity()).fromStreet(deliveryDto.getFromAddress().getStreet()).fromHouse(deliveryDto.getFromAddress().getHouse()).fromFlat(deliveryDto.getFromAddress().getFlat()).toCountry(deliveryDto.getToAddress().getCountry()).toCity(deliveryDto.getToAddress().getCity()).toStreet(deliveryDto.getToAddress().getStreet()).toHouse(deliveryDto.getToAddress().getHouse()).toFlat(deliveryDto.getToAddress().getFlat()).deliveryState(DeliveryState.CREATED).build();
-
+        Delivery delivery = DeliveryMapper.toEntity(deliveryDto);
         Delivery saved = deliveryRepository.save(delivery);
         log.info("Delivery planned: {} for order: {}", saved.getDeliveryId(), saved.getOrderId());
-
-        return DeliveryDto.builder().deliveryId(saved.getDeliveryId()).fromAddress(deliveryDto.getFromAddress()).toAddress(deliveryDto.getToAddress()).orderId(saved.getOrderId()).deliveryState(saved.getDeliveryState()).build();
+        return DeliveryMapper.toDto(saved);
     }
 
     @Override
@@ -159,7 +158,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     private Delivery getDeliveryByOrderId(UUID orderId) {
-        return deliveryRepository.findByOrderId(orderId).orElseThrow(() -> new RuntimeException("Delivery not found for order: " + orderId));
+        return deliveryRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new RuntimeException("Delivery not found for order: " + orderId));
     }
 
     private void updateDeliveryState(Delivery delivery, DeliveryState state) {
@@ -168,9 +168,10 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     private void notifyWarehouseAboutShipping(UUID orderId, UUID deliveryId) {
-        ShippedToDeliveryRequest request = new ShippedToDeliveryRequest();
-        request.setOrderId(orderId);
-        request.setDeliveryId(deliveryId);
+        ShippedToDeliveryRequest request = ShippedToDeliveryRequest.builder()
+                .orderId(orderId)
+                .deliveryId(deliveryId)
+                .build();
         warehouseClient.shippedToDelivery(request);
     }
 }
